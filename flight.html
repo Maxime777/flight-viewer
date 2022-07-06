@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Flight Viewer</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+        }
+        
+        h1,
+        p {
+            color: white;
+        }
+        
+        #app {
+            padding: 25px;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        .row {
+            margin-left: -5px;
+            margin-right: -5px;
+        }
+        
+        .column {
+            float: left;
+            width: 450px;
+            padding: 15px;
+        }
+        /* Clearfix (clear floats) */
+        
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            background-color: transparent;
+            color: white !important;
+        }
+        
+        th,
+        td {
+            text-align: left;
+            padding: 16px;
+        }
+        
+        .column1 {
+            float: left;
+            width: 50%;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="row">
+            <div class="column table">
+                <h1>Departure</h1>
+                <table>
+                    <tr>
+                        <th>ICAO</th>
+                        <td>{{departureCode}}</td>
+                    </tr>
+                    <tr>
+                        <th>IATA</th>
+                        <td>{{departureCodeI}}</td>
+                    </tr>
+                    <tr>
+                        <th>Elevation</th>
+                        <td>{{departureElevation}} <small>ft MSL</small></td>
+                    </tr>
+                    <tr>
+                        <th>Departure Runway</th>
+                        <td>{{departureActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank" :href="`https://apxp.info/airport/${departureCode}/`">details</a></small></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="column table">
+                <h1>Arrival</h1>
+                <table>
+                    <tr>
+                        <th>ICAO</th>
+                        <td>{{arrivalCode}}</td>
+                    </tr>
+                    <tr>
+                        <th>IATA</th>
+                        <td>{{arrivalCodeI}}</td>
+                    </tr>
+                    <tr>
+                        <th>Elevation</th>
+                        <td>{{arrivalElevation}} <small>ft MSL</small></td>
+                    </tr>
+                    <tr>
+                        <th>Arrival Runway</th>
+                        <td>{{arrivalActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank" :href="`https://apxp.info/airport//`">details</a></small></td>
+                    </tr>
+                    <tr>
+                        <th>Approach Charts</th>
+                        <td><small><a target="_blank" :href="`http://www.airmate.aero/index.php?page=airport_page&code=${arrivalCode}#`">AirMate</a></small>
+                            <small><a target="_blank" :href="`https://chartfox.org/${arrivalCode}`">ChartFox</a></small></td>
+                    </tr>
+                    <tr>
+                        <th>Alternate Arrival</th>
+                        <td><span v-html="alternateArrival"></span></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="column table">
+                <h1>General Informations</h1>
+                <table>
+                    <tr>
+                        <th>Flight Number</th>
+                        <td>{{flightNumber}}</td>
+                    </tr>
+                    <tr>
+                        <th>Aircraft</th>
+                        <td>{{aircraft}}</td>
+                    </tr>
+                    <tr>
+                        <th>Cost Index</th>
+                        <td>{{costIndex}}</td>
+                    </tr>
+                    <tr>
+                        <th>Distance</th>
+                        <td>{{distance}} NM</td>
+                    </tr>
+                    <tr>
+                        <th>Duration</th>
+                        <td>{{duration}}</td>
+                    </tr>
+                    <tr>
+                        <th>ZFW (Zero Fuel Weight)</th>
+                        <td>{{zfw}}</td>
+                    </tr>
+                    <tr>
+                        <th>Fuel</th>
+                        <td><span v-html="fuel"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            Raw Route:
+                            <code>{{route}}</code></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="padding: 25px;">
+                <h1>Routing</h1>
+                <p>To enter in FMC:<br></p>
+                <p>
+                    <span v-html="beautifiedRoute"></span>
+                </p>
+
+                <div class="column1">
+                    <img :src="imageMap" width="700px"></img>
+                </div>
+
+                <div class="column1">
+                    <img :src="imageLevel" width="700px"></img>
+                </div>
+
+                <div class="checkbox">
+                    <label>
+                      <input type="checkbox" data-toggle="toggle" v-on:click="toggleLegs()">
+                      Hide auto-generated legs
+                    </label>
+                </div>
+                <table class="table table-borderless table-sm table-small">
+                    <thead>
+                        <tr>
+                            <th scope="col">Stage</th>
+                            <th scope="col">Via</th>
+                            <th scope="col">To</th>
+                            <th scope="col">Distance</th>
+                            <th scope="col">Alt.</th>
+                            <th scope="col">Heading</th>
+                            <th scope="col">Speed</th>
+                        </tr>
+                    </thead>
+
+                    <tr v-for="fix in activeFixes">
+                        <td>{{fix.stage.replace("CRZ","Cruise").replace("DSC","Descent").replace("CLB","Climb")}} <small style="color: gray;">{{fix.is_sid_star}}</small>
+                        </td>
+                        <td>{{fix.via}}</td>
+                        <td>{{fix.ident}} ({{fix.type.toUpperCase()}})</td>
+                        <td>{{fix.distance}} nm</td>
+                        <td>{{fix.altitude_feet}} ft</td>
+                        <td>{{fix.heading_true}} °</td>
+                        <td>{{fix.true_airspeed}} kt</td>
+                        <!-- <td>{{fix.frequency}}</td> -->
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            mounted: function() {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const flightId = urlParams.get('flight');
+                console.log("Mounted " + flightId);
+                var requestURL = `https://api.allorigins.win/raw?url=http://www.simbrief.com/ofp/flightplans/xml/${flightId}.xml`
+                console.log(requestURL)
+
+                fetch(requestURL)
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((text) => {
+                        var parser = new DOMParser();
+                        var xmlDoc = parser.parseFromString(text, "text/xml");
+                        this.xmlSimbrief = xmlDoc;
+                        console.log(this.xmlSimbrief)
+
+                        var origin = this.xmlSimbrief.getElementsByTagName("origin")[0];
+                        var destination = this.xmlSimbrief.getElementsByTagName("destination")[0];
+                        var general = this.xmlSimbrief.getElementsByTagName("general")[0];
+                        var alternate = this.xmlSimbrief.getElementsByTagName("alternate")[0];
+                        var weights = this.xmlSimbrief.getElementsByTagName("weights")[0];
+                        var aircraft = this.xmlSimbrief.getElementsByTagName("aircraft")[0];
+                        var fuel = this.xmlSimbrief.getElementsByTagName("fuel")[0];
+                        var navlog = this.xmlSimbrief.getElementsByTagName("navlog")[0];
+                        var images = this.xmlSimbrief.getElementsByTagName("images")[0];
+                        var times = this.xmlSimbrief.getElementsByTagName("times")[0];
+
+                        var originCode = origin.getElementsByTagName("icao_code")[0].innerHTML;
+                        var originName = origin.getElementsByTagName("name")[0].innerHTML;
+                        var destinationCode = destination.getElementsByTagName("icao_code")[0].innerHTML;
+                        var destinationName = destination.getElementsByTagName("name")[0].innerHTML;
+
+                        var originCodeI = origin.getElementsByTagName("iata_code")[0].innerHTML;
+                        var destinationCodeI = destination.getElementsByTagName("iata_code")[0].innerHTML;
+
+                        this.departureCode = `${originCode}`;
+                        this.arrivalCode = `${destinationCode}`;
+
+                        this.departureCodeI = `${originCodeI} - ${originName}`;
+                        this.arrivalCodeI = `${destinationCodeI} - ${destinationName}`;
+
+                        this.departureActiveRunway = origin.getElementsByTagName("plan_rwy")[0].innerHTML;
+                        this.arrivalActiveRunway = destination.getElementsByTagName("plan_rwy")[0].innerHTML;
+
+                        this.departureElevation = origin.getElementsByTagName("elevation")[0].innerHTML;
+                        this.arrivalElevation = destination.getElementsByTagName("elevation")[0].innerHTML;
+
+                        this.alternateArrival = alternate.getElementsByTagName("icao_code")[0].innerHTML +
+                            " - " +
+                            alternate.getElementsByTagName("name")[0].innerHTML +
+                            " (" +
+                            alternate.getElementsByTagName("plan_rwy")[0].innerHTML +
+                            ")<br>" +
+                            alternate.getElementsByTagName("distance")[0].innerHTML +
+                            " km from " +
+                            this.arrivalCode +
+                            "<br>Route: <code>" +
+                            alternate.getElementsByTagName("route")[0].innerHTML + "</code>";
+
+
+                        this.flightNumber = general.getElementsByTagName("flight_number")[0].innerHTML
+                        this.costIndex = general.getElementsByTagName("costindex")[0].innerHTML
+                        this.distance = general.getElementsByTagName("route_distance")[0].innerHTML
+                        this.zfw = parseInt(weights.getElementsByTagName("est_zfw")[0].innerHTML).toLocaleString() +
+                            ' kg (' + general.getElementsByTagName("passengers")[0].innerHTML + "/" + aircraft.getElementsByTagName("max_passengers")[0].innerHTML + " passengers)"
+
+
+                        this.aircraft = aircraft.getElementsByTagName("name")[0].innerHTML;
+                        this.fuel = "Total: " + parseInt(fuel.getElementsByTagName("plan_ramp")[0].innerHTML).toLocaleString() + " kg<br>" +
+                            "Reserve: " + parseInt(fuel.getElementsByTagName("reserve")[0].innerHTML).toLocaleString() + "kg";
+
+                        this.route = general.getElementsByTagName("route")[0].innerHTML;
+
+                        var passed = false;
+
+                        for (var fix of navlog.getElementsByTagName("fix")) {
+                            var is_sid_star = fix.getElementsByTagName("is_sid_star")[0].innerHTML;
+                            var typeSidStar = "";
+                            if (is_sid_star == 1) {
+                                if (passed) {
+                                    typeSidStar = "STAR";
+                                } else {
+                                    typeSidStar = "SID";
+                                }
+
+                            } else {
+                                passed = true;
+                            }
+
+                            this.fixes.push({
+                                stage: fix.getElementsByTagName("stage")[0].innerHTML,
+                                type: fix.getElementsByTagName("type")[0].innerHTML,
+                                via: fix.getElementsByTagName("via_airway")[0].innerHTML.replace("DCT", "DIRECT"),
+                                ident: fix.getElementsByTagName("ident")[0].innerHTML,
+                                altitude_feet: fix.getElementsByTagName("altitude_feet")[0].innerHTML,
+                                heading_true: fix.getElementsByTagName("heading_true")[0].innerHTML,
+                                frequency: fix.getElementsByTagName("frequency")[0].innerHTML,
+                                true_airspeed: fix.getElementsByTagName("ind_airspeed")[0].innerHTML,
+                                distance: fix.getElementsByTagName("distance")[0].innerHTML,
+                                is_sid_star: typeSidStar
+
+                            });
+                        }
+
+
+                        this.duration = new Date(times.getElementsByTagName("est_time_enroute")[0].innerHTML * 1000).toISOString().substring(11, 16).replace(":", "h ") + "min"
+
+                        var directory = images.getElementsByTagName("directory")[0].innerHTML;
+
+                        this.imageMap = directory + images.getElementsByTagName("map")[0].getElementsByTagName("link")[0].innerHTML;
+                        this.imageLevel = directory + images.getElementsByTagName("map")[images.getElementsByTagName("map").length - 1].getElementsByTagName("link")[0].innerHTML;
+
+                        var builder = '';
+                        var index = 0;
+                        var splittedRoute = this.route.split(" ");
+                        this.splittedRoute = splittedRoute;
+                        this.activeFixes = this.fixes;
+
+                        function hasNumber(myString) {
+                            return /\d/.test(myString);
+                        }
+
+                        var storedStarTransition = "";
+                        builder += `Departure runway: <code>${this.departureActiveRunway}</code><br>`
+
+                        for (var leg of splittedRoute) {
+                            if (index == 0) {
+                                builder += "SID (Standard Instrument Departure): <code>" + leg + "</code>";
+                            }
+
+                            if (index == splittedRoute.length - 1) {
+                                builder += "STAR (Standard Instrument Arrival): <code>" + leg + "</code>";
+
+                                if (storedStarTransition != "") {
+                                    builder += storedStarTransition;
+                                } else {
+                                    builder += "<br>";
+                                }
+                            }
+
+                            if (index == 1 && !hasNumber(leg) && leg != "DCT") {
+                                builder += " with transition: <code>" + leg + "</code><br>";
+                            }
+
+                            if (index == splittedRoute.length - 2 && !hasNumber(leg) && leg != "DCT") {
+                                storedStarTransition = " with transition: <code>" + leg + "</code><br>";
+                            }
+
+                            if (index != 0 && index != 1 && index != splittedRoute.length - 1) {
+                                if (!hasNumber(leg) && leg != "DCT") {
+                                    builder += " to <code>" + leg + "</code> waypoint";
+                                    builder += "</li>"
+                                } else {
+                                    if (leg != "DCT")
+                                        builder += "<li>Via <code>" + leg + "</code> airway";
+                                    else
+                                        builder += "<li>Direct ";
+
+                                }
+
+                            }
+
+                            index++;
+
+
+                        }
+                        builder += `Arrival runway: <code>${this.arrivalActiveRunway}</code>`
+                        console.log(builder)
+
+                        this.beautifiedRoute = builder;
+
+
+                    })
+                    .catch((e) => {
+                        alert("Invalid Flightplan")
+                    });
+            },
+            methods: {
+                toggleLegs: function() {
+                    if (this.hideAutoGeneratedLegs) {
+                        this.activeFixes = this.fixes;
+                        this.hideAutoGeneratedLegs = false;
+                    } else {
+                        this.activeFixes = this.fixes.filter((x) => this.splittedRoute.includes(x.ident));
+                        this.hideAutoGeneratedLegs = true;
+                    }
+                }
+            },
+            data: {
+                splittedRoute: [],
+                hideAutoGeneratedLegs: false,
+                xmlSimbrief: null,
+                departureCode: '',
+                arrivalCode: '',
+                departureCodeI: '',
+                arrivalCodeI: '',
+                departureElevation: '',
+                arrivalElevation: '',
+                departureActiveRunway: '',
+                arrivalActiveRunway: '',
+                alternateArrival: '',
+                flightNumber: '',
+                costIndex: '',
+                distance: '',
+                zfw: '',
+                aircraft: '',
+                fuel: '',
+                route: '',
+                fixes: [],
+                activeFixes: [],
+                imageMap: '',
+                imageLevel: '',
+                beautifiedRoute: '',
+                beautifiedRoute: '',
+                duration: ''
+
+            }
+        })
+    </script>
+</body>
+
+</html>
