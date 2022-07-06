@@ -116,8 +116,16 @@
                     </tr>
                     <tr>
                         <th>Approach Charts</th>
-                        <td><small><a target="_blank" :href="`http://www.airmate.aero/index.php?page=airport_page&code=${arrivalCode}#`">AirMate</a></small>
-                            <small><a target="_blank" :href="`https://chartfox.org/${arrivalCode}`">ChartFox</a></small></td>
+                        <td>
+                            <small><a target="_blank" :href="`http://www.airmate.aero/index.php?page=airport_page&code=${arrivalCode}#`">AirMate</a></small>
+                            <small><a target="_blank" :href="`https://chartfox.org/${arrivalCode}`">ChartFox</a></small>
+                            <small><a target="_blank" :href="`https://vfrmap.com/fe?req=get_tpp&q=${arrivalCode}`">VFRMap</a></small>
+                            <small><a target="_blank" :href="`https://skyvector.com/search/site/${arrivalCode}`">SkyVector</a></small>
+                            <small><a target="_blank" :href="`https://opennav.com/airport/${arrivalCode}`">OpenNAV</a></small>
+                            <small><a target="_blank" :href="`http://www.uvairlines.com/admin/resources/${arrivalCode}.pdf`">UVA</a></small>
+                            <small><a target="_blank" :href="`http://www.google.com/search?q=${arrivalCode} approach plate pdf`">Google</a></small>
+
+                        </td>
                     </tr>
                     <tr>
                         <th>Alternate Arrival</th>
