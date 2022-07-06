@@ -306,6 +306,11 @@
                                 passed = true;
                             }
 
+						if(trans.includes(fix.ident))
+						{
+                                    typeSidStar = "TRANS";
+						}
+
                             this.fixes.push({
                                 stage: fix.getElementsByTagName("stage")[0].innerHTML,
                                 type: fix.getElementsByTagName("type")[0].innerHTML,
@@ -342,6 +347,8 @@
                         var storedStarTransition = "";
                         builder += `Departure runway: <code>${this.departureActiveRunway}</code><br>`
 
+					var trans = []
+
                         for (var leg of splittedRoute) {
                             if (index == 0) {
                                 builder += "SID (Standard Instrument Departure): <code>" + leg + "</code>";
@@ -359,10 +366,12 @@
 
                             if (index == 1 && !hasNumber(leg) && leg != "DCT") {
                                 builder += " with transition: <code>" + leg + "</code><br>";
+						   trans.push(leg)
                             }
 
                             if (index == splittedRoute.length - 2 && !hasNumber(leg) && leg != "DCT") {
                                 storedStarTransition = " with transition: <code>" + leg + "</code><br>";
+						   trans.push(leg)
                             }
 
                             if (index != 0 && index != 1 && index != splittedRoute.length - 1) {
