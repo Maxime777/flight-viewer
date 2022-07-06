@@ -112,7 +112,7 @@
                     </tr>
                     <tr>
                         <th>Arrival Runway</th>
-                        <td>{{arrivalActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank" :href="`https://apxp.info/airport//`">details</a></small></td>
+                        <td>{{arrivalActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank" :href="`https://apxp.info/airport/${arrivalCode}/`">details</a></small></td>
                     </tr>
                     <tr>
                         <th>Approach Charts</th>
@@ -200,7 +200,7 @@
                     <tr v-for="fix in activeFixes">
                         <td>{{fix.stage.replace("CRZ","Cruise").replace("DSC","Descent").replace("CLB","Climb")}}</td>
                         <td>{{fix.via}}  <small style="color: gray;">{{fix.is_sid_star}}</small></td>
-                        <td>{{fix.ident}} ({{fix.type.toUpperCase().replace("LTLG","INFO")}})</td>
+                        <td>{{fix.ident}} ({{fix.type.toUpperCase()}})</td>
                         <td>{{fix.distance}} nm</td>
                         <td>{{fix.altitude_feet}} ft</td>
                         <td>{{fix.heading_true}} °</td>
@@ -311,13 +311,33 @@
                         builder += `Departure runway: <code>${this.departureActiveRunway}</code><br>`
 
 					var trans = []
+					var bypassSidCheck = false;
+					var bypassStarCheck = false;
+					var hasRouteAStar = true;
+					
+					if(splittedRoute[splittedRoute.length - 2] == "DCT")
+					{
+						hasRouteAStar = false;
+					}
+
+					var previousType = "";
+					
 
                         for (var leg of splittedRoute) {
+
+					    var isWaypoint = (!hasNumber(leg) || leg.length > 7) && leg != "DCT" ;
+					   
                             if (index == 0) {
-                                builder += "SID (Standard Instrument Departure): <code>" + leg + "</code>";
+						   if(leg != "DCT")
+                                	builder += "SID (Standard Instrument Departure): <code>" + leg + "</code>";
+						   else
+                                	bypassSidCheck = true;
                             }
 
                             if (index == splittedRoute.length - 1) {
+
+						 if(hasRouteAStar)
+						 {
                                 builder += "STAR (Standard Instrument Arrival): <code>" + leg + "</code>";
 
                                 if (storedStarTransition != "") {
@@ -325,27 +345,45 @@
                                 } else {
                                     builder += "<br>";
                                 }
+						 }
+						else
+						{
+						   bypassStarCheck = true;
+						}
                             }
 
-                            if (index == 1 && !hasNumber(leg) && leg != "DCT") {
+                            if (index == 1 && isWaypoint && !bypassSidCheck) {
                                 builder += " with transition: <code>" + leg + "</code><br>";
 						   trans.push(leg)
                             }
 
-                            if (index == splittedRoute.length - 2 && !hasNumber(leg) && leg != "DCT") {
+                            if (index == splittedRoute.length - 2 && isWaypoint && !bypassStarCheck) {
                                 storedStarTransition = " with transition: <code>" + leg + "</code><br>";
 						   trans.push(leg)
                             }
 
-                            if (index != 0 && index != 1 && index != splittedRoute.length - 1) {
-                                if (!hasNumber(leg) && leg != "DCT") {
-                                    builder += " to <code>" + leg + "</code> waypoint";
-                                    builder += "</li>"
+                            if ((index != 0 && index != 1 && index != splittedRoute.length - 1) || (index == 0 && bypassSidCheck) || (index == 1 && bypassSidCheck) || (index == splittedRoute.length - 1 && bypassStarCheck)) {						
+                                if (isWaypoint) {
+							 var typeBalise = "waypoint";
+							if(leg.length > 7) typeBalise = "GPS coordinates";
+
+							  if(previousType == "VIA"){
+                                    	builder += " to <code>" + leg + "</code> " + typeBalise;
+                                    	builder += "</li>"
+							  }
+							  else
+							  {
+								builder += "<li>Direct ";
+   								builder += " to <code>" + leg + "</code> " + typeBalise;
+                                    	builder += "</li>"
+							  }
+							  previousType = "WPT"
                                 } else {
                                     if (leg != "DCT")
                                         builder += "<li>Via <code>" + leg + "</code> airway";
                                     else
                                         builder += "<li>Direct ";
+							previousType = "VIA"
 
                                 }
 
