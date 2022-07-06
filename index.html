@@ -200,7 +200,7 @@
                     <tr v-for="fix in activeFixes">
                         <td>{{fix.stage.replace("CRZ","Cruise").replace("DSC","Descent").replace("CLB","Climb")}}</td>
                         <td>{{fix.via}}  <small style="color: gray;">{{fix.is_sid_star}}</small></td>
-                        <td>{{fix.ident.replace("TOD","Top of Descent").replace("TOC","Top of Climb")}} ({{fix.type.toUpperCase().replace("LTLG","INFO")}})</td>
+                        <td>{{fix.ident}} ({{fix.type.toUpperCase().replace("LTLG","INFO")}})</td>
                         <td>{{fix.distance}} nm</td>
                         <td>{{fix.altitude_feet}} ft</td>
                         <td>{{fix.heading_true}} °</td>
