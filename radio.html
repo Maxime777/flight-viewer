@@ -17,6 +17,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.dark.min.css" rel="stylesheet" />
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/openplayerjs@latest/dist/openplayer.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/openplayerjs@latest/dist/openplayer.min.css" rel="stylesheet" />
+
+
     <style>
         body {
             padding: 25px;
@@ -35,16 +39,20 @@
         <h1 style="font-variant: small-caps;">local radio stations</h1>
         <h2 style="font-variant: small-caps;">{{regionName.toLowerCase()}} <img height="25px"
                 :src="`https://flagicons.lipis.dev/flags/4x3/${region.toLowerCase()}.svg`"></img></h1><br>
-            <iframe src="silence.mp3" allow="autoplay" id="audio" style="display: none"></iframe>
-
+            <iframe src="" allow="autoplay" id="audio" style="display: none"></iframe>
             <figure>
-                <figcaption>Listening to <b style="color:red; margin-right: 15px;">{{activeStation}}</b><img
+                <figcaption v-if="activeStation != '' && activeStation != null">Listening to <b
+                        style="color:red; margin-right: 15px;">{{activeStation}}</b><img
                         v-if="activeFavicon !== null && activeFavicon !== ''" width="30px" :src="activeFavicon">
                 </figcaption><br>
-                <audio id="audio" controls :src="activeSrc" autoplay>
+                <div id="playerDiv">
+
+                </div>
+
+                <!-- <audio id="audio" controls :src="activeSrc" autoplay>
                     Your browser does not support the
                     <code>audio</code> element.
-                </audio>
+                </audio> -->
             </figure>
 
             <br>
@@ -100,6 +108,13 @@
                     });
 
 
+
+
+
+
+
+
+
             },
             methods: {
                 chooseStation: function (name, url, favicon) {
@@ -109,9 +124,32 @@
                     this.activeStation = name;
                     this.activeSrc = url;
                     this.activeFavicon = favicon;
+
+
+                    document.getElementById("playerDiv").innerHTML = "";
+                    document.getElementById("playerDiv").innerHTML = "<audio class='op-player__media' id='audio-live' controls playsinline><source id='mediaSource' src='" + url + "'></audio>";
+                    var player = new OpenPlayerJS('audio-live', {
+                        hls: {
+                            startLevel: -1
+                        },
+                        live: {
+                            showLabel: true,
+                            showProgress: true,
+                        },
+                    });
+                    player.init();
+                    document.getElementById("mediaSource").src = url;
+
+                    player.load();
+                    player.play();
+
+                    window.scrollTo(0, 0);
+
+
                 }
             },
             data: {
+                $player: null,
                 region: '',
                 regionName: '',
                 activeStation: '',
