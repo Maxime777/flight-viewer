@@ -89,7 +89,7 @@
                 this.region = codeCountry
                 this.regionName = codeCountry
 
-                fetch("https://api.allorigins.win/raw?url=http://91.132.145.114/json/stations/bycountrycodeexact/" + this.region.toLocaleLowerCase())
+                fetch("https://de1.api.radio-browser.info/json/stations/bycountrycodeexact/" + this.region.toLocaleLowerCase())
                     .then(response => response.json())
                     .then(data => {
                         var radios = []
