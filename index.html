@@ -101,6 +101,10 @@
             margin: auto;
             font-size: 25pt;
         }
+
+        a {
+            color: lightgray;
+        }
     </style>
 </head>
 
@@ -112,8 +116,8 @@
     <div id="app">
         <div class="row">
             <div class="column table">
-                <h1>Departure</h1>
-                <table>
+                <h1 style="font-variant:small-caps">departure</h1>
+                <table class="table-borderless table-sm">
                     <tr>
                         <th>ICAO</th>
                         <td>{{departureCode}}</td>
@@ -127,7 +131,7 @@
                         <td>{{departureElevation}} <small>ft MSL</small></td>
                     </tr>
                     <tr>
-                        <th>Departure Runway</th>
+                        <th>Runway</th>
                         <td>{{departureActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank"
                                     :href="`https://apxp.info/airport/${departureCode}/`">details</a></small></td>
                     </tr>
@@ -135,11 +139,16 @@
                         <th>Transition Altitude</th>
                         <td>{{transitionAltitude}} <small>ft</small></td>
                     </tr>
+                    <tr>
+                        <td colspan="2">
+                            <a :href="`./radio.html?countryCode=${countryCode}`" class="btn btn-info" role="button" target="_blank">Local Radios 📻</a>
+                        </td>
+                    </tr>
                 </table>
             </div>
             <div class="column table">
-                <h1>Arrival</h1>
-                <table>
+                <h1 style="font-variant:small-caps">arrival</h1>
+                <table class="table-borderless table-sm">
                     <tr>
                         <th>ICAO</th>
                         <td>{{arrivalCode}}</td>
@@ -153,24 +162,26 @@
                         <td>{{arrivalElevation}} <small>ft MSL</small></td>
                     </tr>
                     <tr>
-                        <th>Arrival Runway</th>
+                        <th>Runway</th>
                         <td>{{arrivalActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank"
                                     :href="`https://apxp.info/airport/${arrivalCode}/`">details</a></small></td>
                     </tr>
                     <tr>
-                        <th>Approach Charts</th>
-                        <td>
+                        <td colspan="2">
                             <small><a target="_blank"
                                     :href="`http://www.airmate.aero/index.php?page=airport_page&code=${arrivalCode}#`">AirMate</a></small>
                             <small><a target="_blank" :href="`https://chartfox.org/${arrivalCode}`">ChartFox</a></small>
                             <small><a target="_blank"
                                     :href="`https://vfrmap.com/fe?req=get_tpp&q=${arrivalCode}`">VFRMap</a></small>
                             <small><a target="_blank"
-                                    :href="`https://skyvector.com/search/site/${arrivalCode}`">SkyVector</a></small>
+                                    :href="`https://skyvector.com/airport/${arrivalCode}`">SkyVector</a></small>
                             <small><a target="_blank"
                                     :href="`https://opennav.com/airport/${arrivalCode}`">OpenNAV</a></small>
                             <small><a target="_blank"
                                     :href="`http://www.uvairlines.com/admin/resources/${arrivalCode}.pdf`">UVA</a></small>
+                            <small><a target="_blank"
+                                    :href="`https://airportnavfinder.com/airport/${arrivalCode}/`">AirportNavFinder</a></small>
+
                             <small><a target="_blank"
                                     :href="`http://www.google.com/search?q=${arrivalCode} approach plate pdf`">Google</a></small>
 
@@ -183,8 +194,8 @@
                 </table>
             </div>
             <div class="column table">
-                <h1>General Informations</h1>
-                <table>
+                <h1 style="font-variant:small-caps">general informations</h1>
+                <table class="table-borderless table-sm">
                     <tr>
                         <th>Flight Number</th>
                         <td>{{flightNumber}}</td>
@@ -225,7 +236,7 @@
                 </table>
             </div>
             <div style="padding: 25px;">
-                <h1>Routing</h1>
+                <h1 style="font-variant:small-caps">routing</h1>
                 <p>To enter in FMC:<br></p>
                 <p>
                     <span v-html="beautifiedRoute"></span>
@@ -511,12 +522,27 @@
                         document.getElementById("app").style.display = "block";
                         document.getElementsByClassName("spinner-border")[0].style.display = "none";
 
+                        fetch("https://api.allorigins.win/raw?url=https://ourairports.com/airports/" + this.departureCode)
+                            .then((response) => {
+                                return response.text();
+                            })
+                            .then((text) => { 
+
+                                var regex = /(?<=<img class="flag" src="\/images\/flags\/)[A-Z]{2}(?=.png)/;
+                                var matches = regex.exec(text);
+                                console.log(matches[0])
+                                this.countryCode = matches[0];
+                            })
+
 
                     })
                     .catch((e) => {
                         document.getElementsByClassName("spinner-border")[0].style.display = "none";
                         document.getElementById("alertMsg").innerHTML = "Something went wrong. Couldn't fetch flight."
                     });
+
+
+
             },
             methods: {
                 toggleLegs: function () {
@@ -530,6 +556,7 @@
                 }
             },
             data: {
+                countryCode: '',
                 splittedRoute: [],
                 hideAutoGeneratedLegs: false,
                 xmlSimbrief: null,
