@@ -52,7 +52,7 @@
             <table class="table table-sm">
                 <thead>
                     <tr>
-                        <th scope="col" style="width: 20px;"></th>
+                        <!-- <th scope="col" style="width: 20px;"></th> -->
                         <th scope="col">Name</th>
                         <th scope="col"></th>
                         <th scope="col">Tags</th>
@@ -62,8 +62,8 @@
                 </thead>
                 <tbody>
                     <tr v-for="radio in radios">
-                        <td><img style="margin-left: 20px;" v-if="radio.favicon !== null && radio.favicon !== ''"
-                                width="30px" :src="radio.favicon"></img></td>
+                        <!-- <td><img style="margin-left: 20px;" v-if="radio.favicon !== null && radio.favicon !== ''"
+                                width="30px" :src="radio.favicon"></img></td> -->
                         <th><a :href="radio.homepage" style="color: white;" target="_blank">{{radio.name}}</a></th>
                         <td><button v-on:click="chooseStation(radio.name,radio.url_resolved,radio.favicon)"
                                 type="button" class="btn btn-primary btn-floating">
