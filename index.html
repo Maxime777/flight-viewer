@@ -8,47 +8,57 @@
     <meta name="robots" content="noindex,nofollow" />
     <title>Flight Viewer</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
     <style>
         body {
             background-color: #121212;
             color: white;
         }
-        
+
         h1,
         p {
             color: white;
         }
-        
+
         #app {
             padding: 25px;
+            display: none;
         }
-        
+
         * {
             box-sizing: border-box;
         }
-        
+
         .row {
             margin-left: -5px;
             margin-right: -5px;
         }
-        
+
         .column {
             float: left;
             width: 450px;
             padding: 15px;
         }
+
         /* Clearfix (clear floats) */
-        
+
         .row::after {
             content: "";
             clear: both;
             display: table;
         }
-        
+
         table {
             border-collapse: collapse;
             border-spacing: 0;
@@ -56,22 +66,48 @@
             background-color: transparent;
             color: white !important;
         }
-        
+
         th,
         td {
             text-align: left;
             padding: 16px;
         }
-        
+
         .column1 {
             float: left;
             width: 50%;
             padding: 5px;
         }
+
+        .center {
+            display: block;
+            position: fixed;
+            z-index: 1031;
+            top: 50%;
+            right: 50%;
+            margin-top: -10px;
+            margin-right: -10px;
+        }
+
+        #alertMsg {
+            width: 500px;
+            height: 100px;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            font-size: 25pt;
+        }
     </style>
 </head>
 
 <body>
+    <div class="spinner-border center" role="status">
+    </div>
+    <div id="alertMsg" class="alertMsg"></div>
     <div id="app">
         <div class="row">
             <div class="column table">
@@ -91,7 +127,12 @@
                     </tr>
                     <tr>
                         <th>Departure Runway</th>
-                        <td>{{departureActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank" :href="`https://apxp.info/airport/${departureCode}/`">details</a></small></td>
+                        <td>{{departureActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank"
+                                    :href="`https://apxp.info/airport/${departureCode}/`">details</a></small></td>
+                    </tr>
+                    <tr>
+                        <th>Transition Altitude</th>
+                        <td>{{transitionAltitude}} <small>ft</small></td>
                     </tr>
                 </table>
             </div>
@@ -112,18 +153,25 @@
                     </tr>
                     <tr>
                         <th>Arrival Runway</th>
-                        <td>{{arrivalActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank" :href="`https://apxp.info/airport/${arrivalCode}/`">details</a></small></td>
+                        <td>{{arrivalActiveRunway}} <small style="font-variant: small-caps;"><a target="_blank"
+                                    :href="`https://apxp.info/airport/${arrivalCode}/`">details</a></small></td>
                     </tr>
                     <tr>
                         <th>Approach Charts</th>
                         <td>
-                            <small><a target="_blank" :href="`http://www.airmate.aero/index.php?page=airport_page&code=${arrivalCode}#`">AirMate</a></small>
+                            <small><a target="_blank"
+                                    :href="`http://www.airmate.aero/index.php?page=airport_page&code=${arrivalCode}#`">AirMate</a></small>
                             <small><a target="_blank" :href="`https://chartfox.org/${arrivalCode}`">ChartFox</a></small>
-                            <small><a target="_blank" :href="`https://vfrmap.com/fe?req=get_tpp&q=${arrivalCode}`">VFRMap</a></small>
-                            <small><a target="_blank" :href="`https://skyvector.com/search/site/${arrivalCode}`">SkyVector</a></small>
-                            <small><a target="_blank" :href="`https://opennav.com/airport/${arrivalCode}`">OpenNAV</a></small>
-                            <small><a target="_blank" :href="`http://www.uvairlines.com/admin/resources/${arrivalCode}.pdf`">UVA</a></small>
-                            <small><a target="_blank" :href="`http://www.google.com/search?q=${arrivalCode} approach plate pdf`">Google</a></small>
+                            <small><a target="_blank"
+                                    :href="`https://vfrmap.com/fe?req=get_tpp&q=${arrivalCode}`">VFRMap</a></small>
+                            <small><a target="_blank"
+                                    :href="`https://skyvector.com/search/site/${arrivalCode}`">SkyVector</a></small>
+                            <small><a target="_blank"
+                                    :href="`https://opennav.com/airport/${arrivalCode}`">OpenNAV</a></small>
+                            <small><a target="_blank"
+                                    :href="`http://www.uvairlines.com/admin/resources/${arrivalCode}.pdf`">UVA</a></small>
+                            <small><a target="_blank"
+                                    :href="`http://www.google.com/search?q=${arrivalCode} approach plate pdf`">Google</a></small>
 
                         </td>
                     </tr>
@@ -167,7 +215,10 @@
                     <tr>
                         <td colspan="2">
                             Raw Route:
-                            <code>{{route}}</code></td>
+                            <code>{{route}}</code><br>
+                            <small><a target="_blank"
+                                :href="`https://www.simbrief.com/ofp/flightplans/${plnFileName}`">Download PLN</a></small>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -188,8 +239,8 @@
 
                 <div class="checkbox">
                     <label>
-                      <input type="checkbox" data-toggle="toggle" v-on:click="toggleLegs()">
-                      Hide auto-generated legs
+                        <input type="checkbox" data-toggle="toggle" v-on:click="toggleLegs()">
+                        Hide auto-generated legs
                     </label>
                 </div>
                 <table class="table table-borderless table-sm table-small">
@@ -207,8 +258,8 @@
 
                     <tr v-for="fix in activeFixes">
                         <td>{{fix.stage.replace("CRZ","Cruise").replace("DSC","Descent").replace("CLB","Climb")}}</td>
-                        <td>{{fix.via}}  <small style="color: gray;">{{fix.is_sid_star}}</small></td>
-                        <td>{{fix.ident}} ({{fix.type.toUpperCase()}})</td>
+                        <td>{{fix.via}} <small style="color: gray;">{{fix.is_sid_star}}</small></td>
+                        <td>{{fix.ident}} <small style="color:gray">{{fix.type.toUpperCase()}}</small></td>
                         <td>{{fix.distance}} nm</td>
                         <td>{{fix.altitude_feet}} ft</td>
                         <td>{{fix.heading_true}} °</td>
@@ -223,10 +274,19 @@
     <script>
         var app = new Vue({
             el: '#app',
-            mounted: function() {
+            mounted: function () {
                 const queryString = window.location.search;
                 const urlParams = new URLSearchParams(queryString);
                 const flightId = urlParams.get('flight');
+
+                if (flightId == null || flightId == "") {
+                    console.log("No Flight ID provided")
+                    document.getElementsByClassName("spinner-border")[0].style.display = "none";
+                    document.getElementById("alertMsg").innerHTML = "No Flight ID were provided. You can get flight ID on Simbrief."
+                    return;
+                }
+
+
                 console.log("Mounted " + flightId);
                 var requestURL = `https://api.allorigins.win/raw?url=http://www.simbrief.com/ofp/flightplans/xml/${flightId}.xml`
                 console.log(requestURL)
@@ -251,11 +311,17 @@
                         var navlog = this.xmlSimbrief.getElementsByTagName("navlog")[0];
                         var images = this.xmlSimbrief.getElementsByTagName("images")[0];
                         var times = this.xmlSimbrief.getElementsByTagName("times")[0];
-
+                        var fms_downloads = this.xmlSimbrief.getElementsByTagName("fms_downloads")[0];
+                        
                         var originCode = origin.getElementsByTagName("icao_code")[0].innerHTML;
                         var originName = origin.getElementsByTagName("name")[0].innerHTML;
                         var destinationCode = destination.getElementsByTagName("icao_code")[0].innerHTML;
                         var destinationName = destination.getElementsByTagName("name")[0].innerHTML;
+
+
+                        this.plnFileName = fms_downloads.getElementsByTagName("mfs")[0].getElementsByTagName("link")[0].innerHTML;
+
+                        this.transitionAltitude =  origin.getElementsByTagName("trans_alt")[0].innerHTML;
 
                         var originCodeI = origin.getElementsByTagName("iata_code")[0].innerHTML;
                         var destinationCodeI = destination.getElementsByTagName("iata_code")[0].innerHTML;
@@ -318,80 +384,76 @@
                         var storedStarTransition = "";
                         builder += `Departure runway: <code>${this.departureActiveRunway}</code><br>`
 
-					var trans = []
-					var bypassSidCheck = false;
-					var bypassStarCheck = false;
-					var hasRouteAStar = true;
-					
-					if(splittedRoute[splittedRoute.length - 2] == "DCT" || splittedRoute[splittedRoute.length - 1] == "DCT")
-					{
-						hasRouteAStar = false;
-					}
+                        var trans = []
+                        var bypassSidCheck = false;
+                        var bypassStarCheck = false;
+                        var hasRouteAStar = true;
 
-					var previousType = "";
-					
+                        if (splittedRoute[splittedRoute.length - 2] == "DCT" || splittedRoute[splittedRoute.length - 1] == "DCT") {
+                            hasRouteAStar = false;
+                        }
+
+                        var previousType = "";
+
 
                         for (var leg of splittedRoute) {
 
-					    var isWaypoint = (!hasNumber(leg) || leg.length > 7) && leg != "DCT" ;
-					   
+                            var isWaypoint = (!hasNumber(leg) || leg.length > 7) && leg != "DCT";
+
                             if (index == 0) {
-						   if(leg != "DCT")
-                                	builder += "SID (Standard Instrument Departure): <code>" + leg + "</code>";
-						   else
-                                	bypassSidCheck = true;
+                                if (leg != "DCT")
+                                    builder += "SID (Standard Instrument Departure): <code>" + leg + "</code>";
+                                else
+                                    bypassSidCheck = true;
                             }
 
                             if (index == splittedRoute.length - 1) {
 
-						 if(hasRouteAStar)
-						 {
-                                builder += "STAR (Standard Instrument Arrival): <code>" + leg + "</code>";
+                                if (hasRouteAStar) {
+                                    builder += "STAR (Standard Instrument Arrival): <code>" + leg + "</code>";
 
-                                if (storedStarTransition != "") {
-                                    builder += storedStarTransition;
-                                } else {
-                                    builder += "<br>";
+                                    if (storedStarTransition != "") {
+                                        builder += storedStarTransition;
+                                    } else {
+                                        builder += "<br>";
+                                    }
                                 }
-						 }
-						else
-						{
-						   bypassStarCheck = true;
-						}
+                                else {
+                                    bypassStarCheck = true;
+                                }
                             }
 
                             if (index == 1 && isWaypoint && !bypassSidCheck) {
                                 builder += " with transition: <code>" + leg + "</code><br>";
-						   trans.push(leg)
+                                trans.push(leg)
                             }
 
                             if (index == splittedRoute.length - 2 && isWaypoint && !bypassStarCheck) {
                                 storedStarTransition = " with transition: <code>" + leg + "</code><br>";
-						   trans.push(leg)
+                                trans.push(leg)
                             }
 
-                            if ((index != 0 && index != 1 && index != splittedRoute.length - 1) || (index == 0 && bypassSidCheck) || (index == 1 && bypassSidCheck) || (index == splittedRoute.length - 1 && bypassStarCheck)) {						
+                            if ((index != 0 && index != 1 && index != splittedRoute.length - 1) || (index == 0 && bypassSidCheck) || (index == 1 && bypassSidCheck) || (index == splittedRoute.length - 1 && bypassStarCheck)) {
                                 if (isWaypoint) {
-							 var typeBalise = "waypoint";
-							if(leg.length > 7) typeBalise = "GPS coordinates";
+                                    var typeBalise = "waypoint";
+                                    if (leg.length > 7) typeBalise = "GPS coordinates";
 
-							  if(previousType == "VIA"){
-                                    	builder += " to <code>" + leg + "</code> " + typeBalise;
-                                    	builder += "</li>"
-							  }
-							  else
-							  {
-								builder += "<li>Direct ";
-   								builder += " to <code>" + leg + "</code> " + typeBalise;
-                                    	builder += "</li>"
-							  }
-							  previousType = "WPT"
+                                    if (previousType == "VIA") {
+                                        builder += " to <code>" + leg + "</code> " + typeBalise;
+                                        builder += "</li>"
+                                    }
+                                    else {
+                                        builder += "<li>Direct ";
+                                        builder += " to <code>" + leg + "</code> " + typeBalise;
+                                        builder += "</li>"
+                                    }
+                                    previousType = "WPT"
                                 } else {
                                     if (leg != "DCT")
                                         builder += "<li>Via <code>" + leg + "</code> airway";
                                     else
                                         builder += "<li>Direct ";
-							previousType = "VIA"
+                                    previousType = "VIA"
 
                                 }
 
@@ -402,7 +464,7 @@
 
                         }
 
-					console.log(trans)
+                        console.log(trans)
                         builder += `Arrival runway: <code>${this.arrivalActiveRunway}</code>`
                         console.log(builder)
 
@@ -424,10 +486,9 @@
                                 passed = true;
                             }
 
-						if(trans.includes(fix.getElementsByTagName("ident")[0].innerHTML))
-						{
-                                    typeSidStar = "TRANS";
-						}
+                            if (trans.includes(fix.getElementsByTagName("ident")[0].innerHTML)) {
+                                typeSidStar = "TRANS";
+                            }
 
                             this.fixes.push({
                                 stage: fix.getElementsByTagName("stage")[0].innerHTML,
@@ -444,15 +505,18 @@
                             });
                         }
 
+                        document.getElementById("app").style.display = "block";
+                        document.getElementsByClassName("spinner-border")[0].style.display = "none";
 
 
                     })
                     .catch((e) => {
-                        alert("Invalid Flightplan")
+                        document.getElementsByClassName("spinner-border")[0].style.display = "none";
+                        document.getElementById("alertMsg").innerHTML = "Something went wrong. Couldn't fetch flight."
                     });
             },
             methods: {
-                toggleLegs: function() {
+                toggleLegs: function () {
                     if (this.hideAutoGeneratedLegs) {
                         this.activeFixes = this.fixes;
                         this.hideAutoGeneratedLegs = false;
@@ -488,7 +552,9 @@
                 imageLevel: '',
                 beautifiedRoute: '',
                 beautifiedRoute: '',
-                duration: ''
+                duration: '',
+                transitionAltitude: '',
+                plnFileName: ''
 
             }
         })
