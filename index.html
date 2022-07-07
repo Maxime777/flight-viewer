@@ -108,6 +108,7 @@
     <div class="spinner-border center" role="status">
     </div>
     <div id="alertMsg" class="alertMsg"></div>
+
     <div id="app">
         <div class="row">
             <div class="column table">
@@ -217,7 +218,8 @@
                             Raw Route:
                             <code>{{route}}</code><br>
                             <small><a target="_blank"
-                                :href="`https://www.simbrief.com/ofp/flightplans/${plnFileName}`">Download PLN</a></small>
+                                    :href="`https://www.simbrief.com/ofp/flightplans/${plnFileName}`">Download
+                                    PLN</a></small>
                         </td>
                     </tr>
                 </table>
@@ -312,7 +314,7 @@
                         var images = this.xmlSimbrief.getElementsByTagName("images")[0];
                         var times = this.xmlSimbrief.getElementsByTagName("times")[0];
                         var fms_downloads = this.xmlSimbrief.getElementsByTagName("fms_downloads")[0];
-                        
+
                         var originCode = origin.getElementsByTagName("icao_code")[0].innerHTML;
                         var originName = origin.getElementsByTagName("name")[0].innerHTML;
                         var destinationCode = destination.getElementsByTagName("icao_code")[0].innerHTML;
@@ -321,7 +323,7 @@
 
                         this.plnFileName = fms_downloads.getElementsByTagName("mfs")[0].getElementsByTagName("link")[0].innerHTML;
 
-                        this.transitionAltitude =  origin.getElementsByTagName("trans_alt")[0].innerHTML;
+                        this.transitionAltitude = origin.getElementsByTagName("trans_alt")[0].innerHTML;
 
                         var originCodeI = origin.getElementsByTagName("iata_code")[0].innerHTML;
                         var destinationCodeI = destination.getElementsByTagName("iata_code")[0].innerHTML;
