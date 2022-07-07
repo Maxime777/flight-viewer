@@ -402,7 +402,7 @@
 
                             if (index == 0) {
                                 if (leg != "DCT")
-                                    builder += "SID (Standard Instrument Departure): <code>" + leg + "</code>";
+                                    builder += "SID <small style='color:gray;'>(Standard Instrument Departure)</small>: <code>" + leg + "</code>";
                                 else
                                     bypassSidCheck = true;
                             }
@@ -410,7 +410,7 @@
                             if (index == splittedRoute.length - 1) {
 
                                 if (hasRouteAStar) {
-                                    builder += "STAR (Standard Instrument Arrival): <code>" + leg + "</code>";
+                                    builder += "STAR <small style='color:gray;'>(Standard Instrument Arrival)</small>: <code>" + leg + "</code>";
 
                                     if (storedStarTransition != "") {
                                         builder += storedStarTransition;
@@ -424,12 +424,12 @@
                             }
 
                             if (index == 1 && isWaypoint && !bypassSidCheck) {
-                                builder += " with transition: <code>" + leg + "</code><br>";
+                                builder += " using transition: <code>" + leg + "</code><br>";
                                 trans.push(leg)
                             }
 
                             if (index == splittedRoute.length - 2 && isWaypoint && !bypassStarCheck) {
-                                storedStarTransition = " with transition: <code>" + leg + "</code><br>";
+                                storedStarTransition = " using transition: <code>" + leg + "</code><br>";
                                 trans.push(leg)
                             }
 
