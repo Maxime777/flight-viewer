@@ -141,7 +141,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <a :href="`./radio.html?countryCode=${countryCode}`" class="btn btn-info" role="button" target="_blank">Local Radios 📻</a>
+                            <a id="radioButton" style="display: none;" :href="`./radio.html?countryCode=${countryCode}`" class="btn btn-info" role="button" target="_blank">Local Radios 📻</a>
                         </td>
                     </tr>
                 </table>
@@ -521,7 +521,7 @@
                         document.getElementById("alertMsg").style.display = "none";
                         document.getElementById("app").style.display = "block";
                         document.getElementsByClassName("spinner-border")[0].style.display = "none";
-
+                        
                         fetch("https://api.allorigins.win/raw?url=https://ourairports.com/airports/" + this.departureCode)
                             .then((response) => {
                                 return response.text();
@@ -532,6 +532,7 @@
                                 var matches = regex.exec(text);
                                 console.log(matches[0])
                                 this.countryCode = matches[0];
+                                document.getElementById("radioButton").style.display = "block";
                             })
 
 
